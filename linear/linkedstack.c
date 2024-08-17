@@ -48,14 +48,14 @@ void linkedStack_print(Node head) {
     printf("\n");
 }
 
-// int main() {
-//     struct LNode stack;
-//     linkedStack_init(&stack);
-//     linkedStack_push(&stack, 1);
-//     linkedStack_push(&stack, 2);
-//     linkedStack_push(&stack, 3);
-//     linkedStack_print(&stack);
-//     printf("%d\n", linkedStack_pop(&stack));
-//     linkedStack_print(&stack);
-//     return 0;
-// }
+int main() {
+    struct LNode stack;
+    linkedStack_init(&stack);
+    linkedStack_push(&stack, 1);
+    linkedStack_push(&stack, 2);
+    linkedStack_push(&stack, 3);
+    linkedStack_print(&stack);
+    printf("%d\n", linkedStack_pop(&stack));
+    linkedStack_print(&stack);
+    return 0;
+}
