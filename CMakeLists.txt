@@ -3,4 +3,4 @@ project(starter_c C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(starter_c ./linear/linkedstack.c)
+add_executable(starter_c main.c)
