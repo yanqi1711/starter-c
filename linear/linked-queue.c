@@ -24,6 +24,7 @@ bool linkedQueue_init(LinkedQueue queue) {
     Node node = malloc(sizeof(struct LNode));
     if (node == NULL) return false;
     queue->rear = queue->front = node;
+    node->next = NULL;
     return true;
 }
 
@@ -33,6 +34,7 @@ bool linkedQueue_offer(LinkedQueue queue, E element) {
     node->element = element;
     queue->rear->next = node;
     queue->rear = node;
+    node->next = NULL;
     return true;
 }
 
@@ -71,4 +73,8 @@ int main() {
     while (!isEmpty(&queue)) {
         printf("%d ", linkedQueue_poll(&queue));
     }
+    for (int i = 0; i < 5; ++i) {
+        linkedQueue_offer(&queue, i * 100);
+    }
+    printQueue(&queue);
 }
