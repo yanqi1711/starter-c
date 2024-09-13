@@ -10,7 +10,8 @@ struct TreeNode {
     E element;
     struct TreeNode* left;
     struct TreeNode* right;
-    int flag;
+    int flag; // 需要经历左右子树都被遍历才行，这里用flag存一下状态，0表示左子树遍历完成，1表示右子树遍历完成
+    int leftTag, rightTag; // 标志位，如果为1表示这一边指针指向的是线索，不为1就是正常的孩子结点
 };
 
 typedef struct TreeNode* Node;
@@ -101,12 +102,46 @@ T pollQueue(LinkedQueue queue){
 }
 // endregion
 
+// 为线索化二叉树创建结点
+Node createNode(E element) {
+    Node node = malloc(sizeof(struct TreeNode));
+    node->left = node->right = NULL;
+    node->rightTag = node->leftTag = 0;
+    node->element = element;
+    return node;
+}
+
+Node pre = NULL; // 建立一个结点存放后续结点的指向
+// 以前序遍历为例，创建线索化二叉树
+void preOrderThreaded(Node root) {
+    if (root == NULL) return;
+
+    if (root->left == NULL) {
+        root->left = pre;
+        root->leftTag = 1;
+    }
+
+    if (pre && pre->right == NULL) {
+        pre->right = root;
+        pre->rightTag = 1;
+    }
+
+    pre = root;
+
+    if (root->leftTag == 0) {
+        preOrderThreaded(root->left);
+    }
+    if (root->rightTag == 0) {
+        preOrderThreaded(root->right);
+    }
+}
+
 // 前序遍历
-void preOrderTraversal(Node head) {
-    if (head == NULL) return;
-    printf("%c ", head->element);
-    preOrderTraversal(head->left);
-    preOrderTraversal(head->right);
+void preOrderTraversal(Node root) {
+    if (root == NULL) return;
+    printf("%c ", root->element);
+    preOrderTraversal(root->left);
+    preOrderTraversal(root->right);
 }
 
 // 中序遍历
@@ -201,32 +236,48 @@ int main() {
     Node c = malloc(sizeof(struct TreeNode));
     Node d = malloc(sizeof(struct TreeNode));
     Node e = malloc(sizeof(struct TreeNode));
-    Node f = malloc(sizeof(struct TreeNode));
 
     a->element = 'A';
     b->element = 'B';
     c->element = 'C';
     d->element = 'D';
     e->element = 'E';
-    f->element = 'F';
 
     a->left = b;
     a->right = c;
     b->left = d;
     b->right = e;
-    c->right = f;
 
     preOrderTraversal(a);
     printf("\n");
-    preOrder(a);
-    printf("\n");
     inOrderTraversal(a);
-    printf("\n");
-    inOrder(a);
     printf("\n");
     postOrderTraversal(a);
     printf("\n");
-    postOrder(a);
-    printf("\n");
     levelOrderTraversal(a);
+    printf("\n");
+
+    // =================================线索化二叉树
+    Node n1 = createNode('A');
+    Node n2 = createNode('B');
+    Node n3 = createNode('C');
+    Node n4 = createNode('D');
+    Node n5 = createNode('E');
+
+    n1->left = n2;
+    n1->right = n3;
+    n2->left = n4;
+    n2->right = n5;
+
+    preOrderThreaded(n1);
+    Node root = n1;
+    // 打印前序遍历的线索化二叉树
+    while (root) {
+        printf("%c ", root->element);
+        if (root->leftTag == 0) {
+            root = root->left;
+        } else {
+            root = root->right;
+        }
+    }
 }
