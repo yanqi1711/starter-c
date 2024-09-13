@@ -112,27 +112,43 @@ Node createNode(E element) {
 }
 
 Node pre = NULL; // 建立一个结点存放后续结点的指向
-// 以前序遍历为例，创建线索化二叉树
+// 前序遍历，创建线索化二叉树
 void preOrderThreaded(Node root) {
     if (root == NULL) return;
-
     if (root->left == NULL) {
         root->left = pre;
         root->leftTag = 1;
     }
-
     if (pre && pre->right == NULL) {
         pre->right = root;
         pre->rightTag = 1;
     }
-
     pre = root;
-
     if (root->leftTag == 0) {
         preOrderThreaded(root->left);
     }
     if (root->rightTag == 0) {
         preOrderThreaded(root->right);
+    }
+}
+
+// 中序遍历，创建线索化二叉树
+void inOrderThreaded(Node root) {
+    if (root == NULL) return;
+    if (root->leftTag == 0) {
+        inOrderThreaded(root->left);
+    }
+    if (root->left == NULL) {
+        root->left = pre;
+        root->leftTag = 1;
+    }
+    if (pre && pre->right == NULL) {
+        pre->right = root;
+        pre->rightTag = 1;
+    }
+    pre = root;
+    if (root->rightTag == 0) {
+        inOrderThreaded(root->right);
     }
 }
 
@@ -269,15 +285,31 @@ int main() {
     n2->left = n4;
     n2->right = n5;
 
-    preOrderThreaded(n1);
+    // preOrderThreaded(n1);
+    // Node root = n1;
+    // // 打印前序遍历的线索化二叉树
+    // while (root) {
+    //     printf("%c ", root->element);
+    //     if (root->leftTag == 0) {
+    //         root = root->left;
+    //     } else {
+    //         root = root->right;
+    //     }
+    // }
+
+    inOrderThreaded(n1);
     Node root = n1;
-    // 打印前序遍历的线索化二叉树
+    // 打印中序遍历的线索化二叉树
     while (root) {
-        printf("%c ", root->element);
-        if (root->leftTag == 0) {
+        while (root && root->leftTag == 0) {
             root = root->left;
-        } else {
-            root = root->right;
         }
+        printf("%c ", root->element);
+        while (root && root->rightTag == 1) {
+            root = root->right;
+            printf("%c ", root->element);
+        }
+        root = root->right;
     }
+
 }
