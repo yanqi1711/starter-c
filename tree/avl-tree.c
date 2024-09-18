@@ -93,11 +93,3 @@ Node insert(Node root, E element) {
     root->height = max(getHeight(root->left), getHeight(root->right)) + 1;
     return root;
 }
-
-int main() {
-    Node root = NULL;
-    while (1) {
-        E e;
-
-    }
-}
