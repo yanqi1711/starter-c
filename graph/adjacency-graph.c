@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MaxVertex 5
+#define MaxVertex 6
 
 typedef char E;
 
@@ -67,15 +67,38 @@ void printGraph(Graph graph){
     }
 }
 
+/**
+ * 深度优先搜索算法
+ * @param graph 图
+ * @param startVertex 起点顶点下标
+ * @param targetVertex 目标顶点下标
+ * @param visited 已到达过的顶点数组
+ */
+void dfs(Graph graph, int startVertex, int targetVertex, int * visited){
+    printf("%c -> ", graph->vertex[startVertex].element);
+    visited[startVertex] = 1;
+    Node node = graph->vertex[startVertex].next;
+    // 遍历当前结点的所有分支
+    while (node) {
+        if (!visited[node->nextVertex])
+            dfs(graph, node->nextVertex, targetVertex, visited);
+        node = node->next;
+    }
+}
+
 int main(){
     Graph graph = create();
-    for (int c = 'A'; c <= 'D' ; ++c)
+    for (int c = 'A'; c <= 'F' ; ++c)
         addVertex(graph, (char) c);
     addEdge(graph, 0, 1);   //A -> B
     addEdge(graph, 1, 2);   //B -> C
-    addEdge(graph, 2, 3);   //C -> D
-    addEdge(graph, 3, 0);   //D -> A
-    addEdge(graph, 2, 0);   //C -> A
+    addEdge(graph, 1, 3);   //B -> D
+    addEdge(graph, 1, 4);   //B -> E
+    addEdge(graph, 4, 5);   //E -> F
 
-    printGraph(graph);
+    int arr[graph->vertexCount];
+    for (int i = 0; i < graph->vertexCount; ++i) {
+        arr[i] = 0;
+    }
+    dfs(graph, 0, 5, arr);
 }
