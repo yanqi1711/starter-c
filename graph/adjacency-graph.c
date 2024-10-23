@@ -7,6 +7,45 @@
 #define MaxVertex 6
 
 typedef char E;
+typedef int T;
+
+typedef struct QueueNode {
+    T element;
+    struct QueueNode * next;
+} * QNode;
+
+typedef struct Queue {
+    QNode front, rear;
+} * LinkedQueue;
+
+_Bool initQueue(LinkedQueue queue) {
+    QNode node = malloc(sizeof(struct QueueNode));
+    if (node == NULL) return 0;
+    queue->front = queue->rear = node;
+    return 1;
+}
+
+_Bool offerQueue(LinkedQueue queue, T element){
+    QNode node = malloc(sizeof(struct QueueNode));
+    if(node == NULL) return 0;
+    node->element = element;
+    queue->rear->next = node;
+    queue->rear = node;
+    return 1;
+}
+
+_Bool isEmpty(LinkedQueue queue){
+    return queue->front == queue->rear;
+}
+
+T pollQueue(LinkedQueue queue){
+    T e = queue->front->next->element;
+    QNode node = queue->front->next;
+    queue->front->next = queue->front->next->next;
+    if(queue->rear == node) queue->rear = queue->front;
+    free(node);
+    return e;
+}
 
 typedef struct Node {   //结点和头结点分开定义，普通结点记录邻接顶点信息
     int nextVertex;
@@ -68,6 +107,31 @@ void printGraph(Graph graph){
 }
 
 /**
+ * 广度优先遍历
+ * @param graph 图
+ * @param startVertex 起点顶点下标
+ * @param targetVertex 目标顶点下标
+ * @param visited 已到达过的顶点数组
+ * @param queue 辅助队列
+ */
+void bfs(Graph graph, int startVertex, int targetVertex, int * visited, LinkedQueue queue) {
+    offerQueue(queue, startVertex);  //首先把起始位置顶点丢进去
+    visited[startVertex] = 1;   //起始位置设置为已走过
+    while (!isEmpty(queue)) {
+        int next = pollQueue(queue);
+        printf("%c -> ", graph->vertex[next].element);  //从队列中取出下一个顶点，打印
+        Node node = graph->vertex[next].next;    //同样的，把每一个分支都遍历一下
+        while (node) {
+            if(!visited[node->nextVertex]) {   //如果没有走过，那么就直接入队
+                offerQueue(queue, node->nextVertex);
+                visited[node->nextVertex] = 1;   //入队时就需要设定为1了
+            }
+            node = node->next;
+        }
+    }
+}
+
+/**
  * 深度优先搜索算法
  * @param graph 图
  * @param startVertex 起点顶点下标
@@ -100,5 +164,8 @@ int main(){
     for (int i = 0; i < graph->vertexCount; ++i) {
         arr[i] = 0;
     }
-    dfs(graph, 0, 5, arr);
+    // dfs(graph, 0, 5, arr);
+    struct Queue queue;
+    initQueue(&queue);
+    bfs(graph, 0, 5, arr, &queue);
 }
