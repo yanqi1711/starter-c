@@ -14,7 +14,6 @@ struct List {
 
 typedef struct List *ArrayList;
 
-// todo
 _Bool arrayList_init(ArrayList list) {
     list->array = malloc(sizeof(E) * list->capacity);
     // 如果内存分配失败，直接返回0，不改动表中任何内容
@@ -24,7 +23,6 @@ _Bool arrayList_init(ArrayList list) {
     return 1;
 }
 
-// todo
 _Bool arrayList_insert(ArrayList list, E element, int index) {
     if (index < 1 || index > list->size + 1) return 0;
 

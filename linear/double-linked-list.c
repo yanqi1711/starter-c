@@ -42,7 +42,6 @@ _Bool linkedList_insert(Node head, E element, int index) {
     return 1;
 }
 
-// todo
 _Bool linkedList_delete(Node head, int index) {
     if (index < 1) return 0;
     while (--index) {

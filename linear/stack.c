@@ -22,7 +22,6 @@ _Bool arrayStack_init(ArrayStack stack) {
     return 1;
 }
 
-// todo
 _Bool arrayStack_push(ArrayStack stack, E element) {
     if (stack->top+ 1 == stack->capacity) {
         int newCapacity = stack->capacity + (stack->capacity >> 1);
