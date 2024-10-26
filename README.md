@@ -196,5 +196,80 @@ Floyd算法：
 计算最早开始时间 ve 和最晚开始时间 vl
 求关键路径的快速方法：找起点到终点的最长路径
 
+## 排序算法
+
+| 排序算法 |    最好情况     |    最坏情况     | 空间复杂度 | 稳定性 |
+| :------: | :-------------: | :-------------: | :--------: | :----: |
+| 冒泡排序 |     $O(n)$      |    $O(n^2)$     |   $O(1)$   |  稳定  |
+| 插入排序 |     $O(n)$      |    $O(n^2)$     |   $O(1)$   |  稳定  |
+| 选择排序 |    $O(n^2)$     |    $O(n^2)$     |   $O(1)$   | 不稳定 |
+| 快速排序 |   $O(nlogn)$    |    $O(n^2)$     | $O(logn)$  | 不稳定 |
+| 希尔排序 |  $O(n^{1.3})$   |    $O(n^2)$     |   $O(1)$   | 不稳定 |
+|  堆排序  |   $O(nlogn)$    |   $O(nlogn)$    |   $O(1)$   | 不稳定 |
+| 归并排序 |   $O(nlogn)$    |   $O(nlogn)$    |   $O(n)$   |  稳定  |
+| 计数排序 |   $O(n + k)$    |   $O(n + k)$    |   $O(k)$   |  稳定  |
+|  桶排序  |   $O(n + k)$    |    $O(n^2)$     | $O(k + n)$ |  稳定  |
+| 基数排序 | $O(n \times k)$ | $O(n \times k)$ |  $O(k+n)$  |  稳定  |
+
+### 关于优化
+
+插入排序是进行一轮循环，每次选择的元素插入到左边适合的位置，这里插入位置我们可以使用二分搜索来确定
+
+```c
+int binarySearch(int arr[], int left, int right, int target){
+    int mid;
+    while (left <= right) {
+        mid = (left + right) / 2;
+        if(target == arr[mid]) return mid + 1;   //如果插入元素跟中间元素相等，直接返回后一位
+        else if (target < arr[mid])  //如果大于待插入元素，说明插入位置肯定在左边
+            right = mid - 1;   //范围划到左边
+        else   
+            left = mid + 1;   //范围划到右边
+    }
+    return left;   //不断划分范围，left也就是待插入位置了
+}
+
+void insertSort(int arr[], int size){
+    for (int i = 1; i < size; ++i) {
+        int tmp = arr[i];
+        int j = binarySearch(arr, 0, i - 1, tmp);   //由二分搜索来确定插入位置
+        for (int k = i; k > j; k--) arr[k] = arr[k - 1];   //依然是将后面的元素后移
+        arr[j] = tmp;
+    }
+}
+```
+
+选择排序是进行一轮循环，每次从右边找到一个最小元素放到前面，这里我们可以同时寻找最大的元素丢到右边
+
+```c
+void swap(int * a, int * b){
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+void selectSort(int arr[], int size){
+    int left = 0, right = size - 1;   //相当于左端和右端都是已经排好序的，中间是待排序的，所以说范围不断缩小
+    while (left < right) {
+        int min = left, max = right;
+        for (int i = left; i <= right; i++) {
+            if (arr[i] < arr[min]) min = i;   //同时找最小的和最大的
+            if (arr[i] > arr[max]) max = i;
+        }
+        swap(&arr[max], &arr[right]);   //这里先把大的换到右边
+        //注意大的换到右边之后，有可能被换出来的这个就是最小的，所以说需要判断一下
+        //如果遍历完发现最小的就是当前右边排序的第一个元素
+        //此时因为已经被换出来了，所以说需要将min改到换出来的那个位置
+        if (min == right) min = max;
+        swap(&arr[min], &arr[left]);   //接着把小的换到左边
+        left++;    //这一轮完事之后，缩小范围
+        right--;
+    }
+}
+```
+
+
+
+
 
 
